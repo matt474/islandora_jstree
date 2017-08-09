@@ -59,7 +59,6 @@ function islandora_jstree_preprocess_islandora_jstree(&$variables) {
   $res = $za->open($file);
   
   $json = "[";
-  
   if($res == true)
   {
     for ($i=0; $i<$za->numFiles;$i++) {
@@ -75,17 +74,13 @@ function islandora_jstree_preprocess_islandora_jstree(&$variables) {
         $name = substr($id, $lastSlash+1);
       }
       
-      
-      
       if($i != 0)
         $json .= ",\n";
       $json .= "{ \"id\" : \"$id\", \"parent\" : \"$parent\", \"text\" : \"$name\" }";
       }
   }
-  
   $json .= "]";
   
-  //dpm($json);
   
   drupal_add_js(array(
     'islandoraJSTree' => array(
