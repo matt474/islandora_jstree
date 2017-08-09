@@ -1,0 +1,6 @@
+name = Islandora jsTree
+description = "A plugin allowing jsTree to display Islandora content. Requires the jsTree library."
+dependencies[] = libraries
+core = 7.x
+version = 7.x-dev
+package = Islandora Viewers 
