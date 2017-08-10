@@ -11,7 +11,7 @@
           'data' : $json
         },
         'types' : {
-          'default' : { 'icon' : 'jstree-folder' },
+          'directory' : { 'icon' : 'jstree-folder' },
           'file' : { 'icon' : 'jstree-file' },
         }
       });

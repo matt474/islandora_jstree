@@ -52,6 +52,7 @@ function islandora_jstree_preprocess_islandora_jstree(&$variables) {
   $params = $variables['params'];
   $uri = $params['url'];
   
+  //create a copy because we can not directly open a URL
   $file = tempnam('/tmp', 'zip_file.zip');
   copy($uri, $file);
   
@@ -59,9 +60,12 @@ function islandora_jstree_preprocess_islandora_jstree(&$variables) {
   $res = $za->open($file);
   
   $json = "[";
+
+  //Prevent freezing by limiting number of files loaded
+  $MAX_FILES = 1000;
   if($res == true)
   {
-    for ($i=0; $i<$za->numFiles;$i++) {
+    for ($i=0; $i<$za->numFiles && $i<$MAX_FILES;$i++) {
       $zipDtls = $za->statIndex($i);
       $id = $zipDtls['name'];
       
