@@ -64,9 +64,17 @@ function islandora_jstree_preprocess_islandora_jstree(&$variables) {
     for ($i=0; $i<$za->numFiles;$i++) {
       $zipDtls = $za->statIndex($i);
       $id = $zipDtls['name'];
-      $id = rtrim($id, '/');
       
-      $parent = "#";
+      //if the id ends with '/'
+      if (substr($id, -1) == '/') {
+        $type = 'directory';
+        $id = rtrim($id, '/');
+      }
+      else {
+        $type = 'file';
+      }
+      
+      $parent = '#';
       $name = $id;
       $lastSlash = strrpos($id, '/');
       if($lastSlash != 0){ 
@@ -76,7 +84,7 @@ function islandora_jstree_preprocess_islandora_jstree(&$variables) {
       
       if($i != 0)
         $json .= ",\n";
-      $json .= "{ \"id\" : \"$id\", \"parent\" : \"$parent\", \"text\" : \"$name\" }";
+      $json .= "{ \"id\" : \"$id\", \"parent\" : \"$parent\", \"text\" : \"$name\", \"type\" : \"$type\" }";
       }
   }
   $json .= "]";

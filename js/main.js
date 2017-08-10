@@ -6,9 +6,13 @@
       $json = JSON.parse($file);
       
       $('#jstree').jstree({
-        plugins: ["wholerow"],
+        plugins: ['types'],
         'core' : { 
           'data' : $json
+        },
+        'types' : {
+          'default' : { 'icon' : 'jstree-folder' },
+          'file' : { 'icon' : 'jstree-file' },
         }
       });
     }
