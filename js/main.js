@@ -6,7 +6,7 @@
       $json = JSON.parse($file);
       
       $('#jstree').jstree({
-        plugins: ["checkbox", "sort", "types", "wholerow", "search"],
+        plugins: ["wholerow"],
         'core' : { 
           'data' : $json
         }
