@@ -46,7 +46,6 @@ function islandora_jstree_callback($params = array()) {
  */
 function islandora_jstree_preprocess_islandora_jstree(&$variables) {
   $library_path = libraries_get_path('jstree');
-  $zip_library_path = libraries_get_path('jszip');
   $module_path = drupal_get_path('module', 'islandora_jstree');
   
   $params = $variables['params'];
@@ -100,7 +99,6 @@ function islandora_jstree_preprocess_islandora_jstree(&$variables) {
     ),
   ),'setting');
   
-  drupal_add_js($zip_library_path . "/dist/jszip.min.js", array('weight' => -4));
   drupal_add_js($library_path . "/dist/jstree.min.js", array('weight' => -3));
   drupal_add_js($module_path . "/js/main.js", array('weight' => -2));
   
