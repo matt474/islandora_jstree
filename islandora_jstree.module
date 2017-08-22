@@ -20,6 +20,23 @@ function islandora_jstree_islandora_viewer_info() {
 }
 
 /**
+ * Implements hook_menu().
+ */
+function islandora_jstree_menu() {
+  return array(
+    'admin/islandora/islandora_viewers/jstree' => array(
+      'title' => 'jsTree',
+      'description' => 'Configure the jsTree viewer.',
+      'page callback' => 'drupal_get_form',
+      'access arguments' => array('administer site configuration'),
+      'page arguments' => array('islandora_jsTree_admin'),
+      'file' => 'includes/admin.form.inc',
+      'type' => MENU_NORMAL_ITEM,
+    ),
+  );
+}
+
+/**
  * Implements hook_theme().
  */
 function islandora_jstree_theme($existing, $type, $theme, $path) {
@@ -58,7 +75,7 @@ function islandora_jstree_preprocess_islandora_jstree(&$variables) {
   $za = new ZipArchive();
   $res = $za->open($file);
   
-  if($za->numFiles < 1) {
+  if($res == false || $za->numFiles < 1) {
     $variables['errorMessage'] = 'jstree is unable to read the zip file.';
     drupal_add_css($module_path . "/css/jstree.css");
     return;
@@ -67,39 +84,38 @@ function islandora_jstree_preprocess_islandora_jstree(&$variables) {
   $json = "[";
 
   //Prevent freezing by limiting number of files loaded
-  $MAX_FILES = 1000;
-  if($res == true)
-  {
-    for ($i=0; $i<$za->numFiles && $i<$MAX_FILES;$i++) {
-      $zipDtls = $za->statIndex($i);
-      $id = $zipDtls['name'];
+  $MAX_FILES = (int)variable_get('islandora_jstree_max_element', 1000);
+  
+  for ($i=0; $i<$za->numFiles && ($i<$MAX_FILES || $MAX_FILES < 0); $i++) {
+    $zipDtls = $za->statIndex($i);
+    $id = $zipDtls['name'];
       
-      //if the id ends with '/'
-      if (substr($id, -1) == '/') {
-        $type = 'directory';
-        $id = rtrim($id, '/');
-      }
-      else {
-        $type = 'file';
-      }
-      
-      $parent = '#';
-      $name = $id;
-      $lastSlash = strrpos($id, '/');
-      if($lastSlash != 0){ 
-        $parent = substr($id, 0, $lastSlash);
-        $name = substr($id, $lastSlash+1);
-      }
-      
-      if($i != 0)
-        $json .= ",\n";
-      $json .= "{ \"id\" : \"$id\", \"parent\" : \"$parent\", \"text\" : \"$name\", \"type\" : \"$type\" }";
-      }
+    //if the id ends with '/'
+    if (substr($id, -1) == '/') {
+      $type = 'directory';
+      $id = rtrim($id, '/');
+    }
+    else {
+      $type = 'file';
+    }
+    
+    $parent = '#';
+    $name = $id;
+    $lastSlash = strrpos($id, '/');
+    if($lastSlash != 0){ 
+      $parent = substr($id, 0, $lastSlash);
+      $name = substr($id, $lastSlash+1);
+    }
+    
+    if($i != 0)
+      $json .= ",\n";
+    $json .= "{ \"id\" : \"$id\", \"parent\" : \"$parent\", \"text\" : \"$name\", \"type\" : \"$type\" }";
   }
+
   $json .= "]";
   
   $truncated = $za->numFiles - $MAX_FILES;
-  if($truncated > 0)
+  if($MAX_FILES >= 0 && $truncated > 0)
     $variables['truncated'] = $truncated;
   
   drupal_add_js(array(
