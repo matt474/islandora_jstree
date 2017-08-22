@@ -58,6 +58,12 @@ function islandora_jstree_preprocess_islandora_jstree(&$variables) {
   $za = new ZipArchive();
   $res = $za->open($file);
   
+  if($za->numFiles < 1) {
+    drupal_add_js($module_path . "/js/error.js");
+    drupal_add_css($module_path . "/css/error.css");
+    return;
+  }
+  
   $json = "[";
 
   //Prevent freezing by limiting number of files loaded
