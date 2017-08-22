@@ -2,4 +2,8 @@
   color: red;
   font-weight: bold;
   font-size: 120%;
+}
+
+.jstree-warning{
+  color: orange;
 } 

@@ -59,8 +59,8 @@ function islandora_jstree_preprocess_islandora_jstree(&$variables) {
   $res = $za->open($file);
   
   if($za->numFiles < 1) {
-    drupal_add_js($module_path . "/js/error.js");
-    drupal_add_css($module_path . "/css/error.css");
+    $variables['errorMessage'] = 'jstree is unable to read the zip file.';
+    drupal_add_css($module_path . "/css/jstree.css");
     return;
   }
   
@@ -98,6 +98,9 @@ function islandora_jstree_preprocess_islandora_jstree(&$variables) {
   }
   $json .= "]";
   
+  $truncated = $za->numFiles - $MAX_FILES;
+  if($truncated > 0)
+    $variables['truncated'] = $truncated;
   
   drupal_add_js(array(
     'islandoraJSTree' => array(
@@ -109,4 +112,5 @@ function islandora_jstree_preprocess_islandora_jstree(&$variables) {
   drupal_add_js($module_path . "/js/main.js", array('weight' => -2));
   
   drupal_add_css($library_path . "/dist/themes/default/style.min.css");
+  drupal_add_css($module_path . "/css/jstree.css");
 }
