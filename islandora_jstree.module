@@ -15,6 +15,7 @@ function islandora_jstree_islandora_viewer_info() {
       'description' => t('jsTree for zip files.'),
       'callback' => 'islandora_jstree_callback',
       'mimetype' => array('application/zip'),
+      'configuration' => 'admin/islandora/islandora_viewers/jstree',
     ),
   );
 }
