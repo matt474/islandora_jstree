@@ -55,8 +55,8 @@ function islandora_jstree_theme($existing, $type, $theme, $path) {
  * @param array $params
  *   Array with configuration info for the tabular.
  */
-function islandora_jstree_callback($params = array()) {
-  return theme('islandora_jstree', array('params' => $params));
+function islandora_jstree_callback($params = array(), $object = null) {
+  return theme('islandora_jstree', array('object' => $object, 'params' => $params));
 }
 
 /**
@@ -67,17 +67,23 @@ function islandora_jstree_preprocess_islandora_jstree(&$variables) {
   $module_path = drupal_get_path('module', 'islandora_jstree');
   
   $params = $variables['params'];
-  $uri = $params['url'];
+  $dsid = $params['dsid'];
   
-  //create a copy because we can not directly open a URL
+  $ds = $variables['object'][$dsid];
+  
+  //create a copy because we can not directly open a datastream
   $file = tempnam('/tmp', 'zip_file.zip');
-  copy($uri, $file);
+  $ds->getContent($file);
   
   $za = new ZipArchive();
   $res = $za->open($file);
   
   if($res == false || $za->numFiles < 1) {
     $variables['errorMessage'] = 'jstree is unable to read the zip file.';
+
+  }
+  
+  if(isset($variables['errorMessage'])) {
     drupal_add_css($module_path . "/css/jstree.css");
     return;
   }
