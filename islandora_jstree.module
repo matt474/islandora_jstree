@@ -93,7 +93,7 @@ function islandora_jstree_preprocess_islandora_jstree(&$variables) {
     return;
   }
   
-  $json = "[";
+  $json = '[{ "id" : "/", "parent" : "#", "text" : "'. $ds->label .'", "type" : "directory" }';
 
   //Prevent freezing by limiting number of files loaded
   $MAX_FILES = (int)variable_get('islandora_jstree_max_element', 1000);
@@ -111,20 +111,20 @@ function islandora_jstree_preprocess_islandora_jstree(&$variables) {
       $type = 'file';
     }
     
-    $parent = '#';
-    $name = $id;
     $lastSlash = strrpos($id, '/');
     if($lastSlash != 0){ 
       $parent = substr($id, 0, $lastSlash);
       $name = substr($id, $lastSlash+1);
     }
+    else {
+      $parent = '/';
+      $name = $id;
+    }
     
-    if($i != 0)
-      $json .= ",\n";
-    $json .= "{ \"id\" : \"$id\", \"parent\" : \"$parent\", \"text\" : \"$name\", \"type\" : \"$type\" }";
+    $json .= ",{ \"id\" : \"$id\", \"parent\" : \"$parent\", \"text\" : \"$name\", \"type\" : \"$type\" }";
   }
 
-  $json .= "]";
+  $json .= ']';
   
   $truncated = $za->numFiles - $MAX_FILES;
   if($MAX_FILES >= 0 && $truncated > 0)
