@@ -66,11 +66,21 @@ function islandora_jstree_preprocess_islandora_jstree(&$variables) {
   $library_path = libraries_get_path('jstree');
   $module_path = drupal_get_path('module', 'islandora_jstree');
   
+  //add early to display error messages.
+  drupal_add_css($module_path . "/css/jstree.css");
+
   $params = $variables['params'];
   $dsid = $params['dsid'];
   
   $ds = $variables['object'][$dsid];
   
+  $max_size = 1024*1024 * variable_get('islandora_jstree_megabyte_max_size', 500);
+  if($ds->size > $max_size)
+  {
+    $variables['errorMessage'] = 'The zip file is: ' . format_size($ds->size) . ' , the allowed size is: '. format_size($max_size);
+    return;
+  }
+
   //create a copy because we can not directly open a datastream
   $file = tempnam('/tmp', 'zip_file.zip');
   $ds->getContent($file);
@@ -80,11 +90,6 @@ function islandora_jstree_preprocess_islandora_jstree(&$variables) {
   
   if($res == false || $za->numFiles < 1) {
     $variables['errorMessage'] = 'jstree is unable to read the zip file.';
-
-  }
-  
-  if(isset($variables['errorMessage'])) {
-    drupal_add_css($module_path . "/css/jstree.css");
     return;
   }
   
